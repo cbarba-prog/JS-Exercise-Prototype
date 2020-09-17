@@ -46,7 +46,7 @@ function Person(name, age){
 } 
 
 Person.prototype.eat = function(edible){
-  if(this.stomach.length <= 10){
+  if(this.stomach.length < 10){
     this.stomach.push(edible);
   }
 }
@@ -97,12 +97,25 @@ function Car(model, milesPerGallon) {
 
   this.model = model;
   this.milesPerGallon = milesPerGallon;
-  this.odometer = [0];
-  this.tank = [0];
+  this.odometer = 0;
+  this.tank = 0;
 }
 
 Car.prototype.fill = function(gallons){
-  this.tank.push(gallons);
+  this.tank = this.tank + gallons;
+}
+
+Car.prototype.drive = function(distance){
+  const driveMiles = this.tank * this.milesPerGallon;
+  if(distance <= driveMiles){
+    this.odometer =this.odometer + distance;;
+    this.tank = this.tank - (distance / this.milesPerGallon);
+  }
+  else{
+    this.odometer = this.odometer + driveMiles;
+    this.tank = 0;
+    return `I ran out of fuel at ${this.odometer} miles`;
+  }
 }
 
 const carOne = new Car('Honda', 25);
@@ -111,6 +124,8 @@ carOne.fill(30);
 
 console.log(carOne.tank);
 
+
+
 /*
   TASK 3
     - Write a Baby constructor subclassing Person.
@@ -118,8 +133,15 @@ console.log(carOne.tank);
     - Besides the methods on Person.prototype, babies have the ability to `.play()`:
         + Should return a string "Playing with x", x being the favorite toy.
 */
-function Baby() {
+function Baby(name, age, favoriteToy) {
+  Person.call(this, name, age);
+  this.favoriteToy = favoriteToy;
 
+}
+
+Baby.prototype = Object.create(Person.prototype);
+Baby.prototype.play = function(){
+  return `Playing with ${this.favoriteToy}`;
 }
 
 /* 
@@ -127,9 +149,9 @@ function Baby() {
 
   In your own words explain the four principles for the "this" keyword below:
   1. Window/Global Object Binding: in global scope, "this" is in the window or console object
-  2. Implicit Binding: object before the dot calls the function
-  3. New Binding: instance of the object created and returned by the constructor function
-  4. Explicit Binding: used with call or apply method
+  2. Implicit Binding: "this" object before the dot calls the function
+  3. New Binding:"this" instance of the object created and returned by the constructor function
+  4. Explicit Binding:"this" used with call or apply method
 */
 
 
